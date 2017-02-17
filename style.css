@@ -1,0 +1,84 @@
+div#main 
+{
+	background-color: yellow;
+	width: 624px;
+	height: 760px;
+	position: relative;
+	margin-left: auto; 
+	margin-right: auto;
+	border-radius:25px;
+}
+
+h1.my_title
+{
+	text-align: center;
+	font-size: 150%;
+	padding-top: 26px;
+}
+
+div#inner
+{
+	width: 468px;
+	height: 500px;
+	position: relative;
+	margin-left: auto; 
+	margin-right: auto;
+	border: 5px solid;
+	padding: 10px
+}
+
+div#btn_panel
+{
+	width: 468px;
+	position: relative;
+	margin-left: auto; 
+	margin-right: auto;
+	margin-top: 20px;
+}
+
+.btn
+{
+	background-color: green
+}
+
+.small_btn
+{
+	width: 60px
+}
+
+.big_btn
+{
+	width: 60px;
+	height: 60px
+}
+
+#main_btn_panel
+{
+	float: left
+}
+
+#control_btn_panel
+{
+	float: right;
+	margin-top: -1px;
+}
+
+div#game_panel
+{
+	width: 220px;
+	height: 440px;
+	border: 1px solid;
+	float: left;
+}
+
+div#info_panel
+{
+	float: left;
+	margin-left: 30px;
+}
+
+.border
+{
+	font-weight:bold;
+}
+

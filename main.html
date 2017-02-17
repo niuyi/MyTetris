@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Tetris!!</title>
+	<link rel="stylesheet" type="text/css" href="style.css" /> 
+
+	<script type="text/javascript">
+		
+		var timer_info;
+		var count;
+		var timerId;
+
+		function load(){
+			timer_info = document.getElementById("timer_info");
+			count = -1;
+			timerId = null;
+		}
+
+		function startWorker()
+		{
+			count = -1;
+			clearTimeout(timerId);
+			timerId = setTimeout("runTimer()", 1000);
+		}
+
+		function runTimer()
+		{
+			count += 1;
+			alert(count);
+			timer_info.innerHTML = formatTime(count);
+			timerId = setTimeout("runTimer()", 1000);
+		}
+
+		function formatTime(value)
+		{
+			var min = Math.floor(value / 60);
+			var sec = value % 60;
+
+			return min + " : " + sec;
+		}
+
+	</script>
+</head>
+<body onload="load()">
+
+<div id="main">
+	<h1 class="my_title">我的俄罗斯方块</h1>
+	<div id="inner">
+		<div id="game_panel">
+			
+		</div>
+
+		<div id="info_panel">
+			<text>历史记录：</text>
+			<text class="border">0</text>
+			<br/>
+			<br/>
+			<br/>
+			<text>消除行：</text>
+			<text class="border">0</text>
+			<br/>
+			<br/>
+			<br/>
+			<text>时间：</text>
+			<text id="timer_info" class="border">00：00</text>
+		</div>
+
+	</div>
+	<div id="btn_panel">
+		<div id="main_btn_panel">
+			<button class="btn small_btn">暂停</button>
+			<button class="btn small_btn" onclick="startWorker()">重来</button>
+		</div>
+
+		<div id="control_btn_panel">
+			<table >
+				<tr>
+					<td><button class="btn big_btn">左</button></td>
+					<td><button class="btn big_btn">旋转</button></td>
+					<td><button class="btn big_btn">右</button></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><button class="btn big_btn">下</button></td>
+					<td></td>
+				</tr>
+			</table>
+			<!-- <button class="btn big_btn">左</button>
+			<button class="btn big_btn">旋转</button>
+			<button class="btn big_btn">右</button> -->
+			<!-- <button class="btn big_btn">下</button> -->
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
