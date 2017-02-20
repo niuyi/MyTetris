@@ -7,36 +7,297 @@
 	<script type="text/javascript">
 		
 		var timer_info;
-		var count;
+		var score_info;
+		var start_time;;
 		var timerId;
+		var canvas;
+		var inPause = false;
+		var pause_time = 0;
+		var pauseStartTime = 0;
+		var context;
+		var current_block = null;
+		var test = 0;
+
+		var CONST = {
+			TIMER_DURATION : 500,
+			WIDTH_COUNT : 10,
+			HEIGHT_COUNT : 10,
+			FILL_STYLE : "#FF0000",
+			BLOCK_WIDTH : 22
+		};
+
+		var container = {
+			blocks : [],
+			init : function(){
+				for(var i = 0 ; i < CONST.WIDTH_COUNT ; i++){
+					for(var j = 0; j < CONST.HEIGHT_COUNT; j++){
+						var index = getIndex(i, j);
+						this.blocks[index] = 0;
+					}
+				}
+			},
+			check_clean : function(){
+				for(var j = CONST.HEIGHT_COUNT - 1 ; j >= 0 ; j--){
+					var temp = 1;
+					for(var i = 0; i < CONST.WIDTH_COUNT; i++){
+						var index = getIndex(i, j);
+						temp = temp * this.blocks[index];
+					}
+
+					if(temp === 1){
+						alert("clear line!: " + j);
+					}
+				}
+			}
+		};
+
+		
+
+
+		function getBlock(){
+			var block = {
+				x:0,
+				y:0,
+
+				moveDown : function(container){
+					var result = this.calcuate(this.x, this.y + 1, container);
+
+					if(!result){
+						var shape = this.getShape();
+						for(var i in shape){
+							container.blocks[shape[i]] = 1;
+						}
+
+						next();
+					}
+				},
+
+				moveLeft : function(container){
+					this.calcuate(this.x - 1, this.y, container);
+				},
+
+				moveRight : function(container){
+					this.calcuate(this.x + 1, this.y, container);
+				},
+
+				calcuate : function(newX, newY, container){
+					var oldX = this.x;
+					var oldY = this.y;
+
+					var oldShape = this.getShape();
+
+					this.x = newX;
+					this.y = newY;
+
+					var newShape = this.getShape();
+
+					if(!this.check(newShape, container)){
+						this.x = oldX;
+						this.y = oldY;
+						return false;
+					}
+
+					for(var i in oldShape){
+						container.blocks[oldShape[i]] = 0;
+					}
+
+					for(var i in newShape){
+						container.blocks[newShape[i]] = 2;
+					}
+
+					return true;
+				},
+
+				check : function(newShape, container){
+					for(var i in newShape){
+						if(container.blocks[newShape[i]] === 1){
+							return false;
+						}
+
+						var pos = getXYByIndex(newShape[i]);
+						var x = pos[0];
+						var y = pos[1];
+
+						if(x < 0 || x > CONST.WIDTH_COUNT - 1){
+							return false;
+						}
+
+						if(y < 0 || y > CONST.HEIGHT_COUNT - 1){
+							return false;
+						}
+					}
+
+					return true;
+				},
+
+				getShape : function(){
+
+					return [getIndex(this.x, this.y), getIndex(this.x + 1, this.y), getIndex(this.x, this.y + 1), getIndex(this.x + 1, this.y + 1)];
+
+					// if(test >= 2){
+					// 	return function{}{
+					// 		return [getIndex(this.x, this.y), getIndex(this.x + 1, this.y), getIndex(this.x + 2, this.y), getIndex(this.x + 3, this.y)];
+					// 	}
+					// }else{
+					// 	return function(){
+					// 		return [getIndex(this.x, this.y), getIndex(this.x + 1, this.y), getIndex(this.x, this.y + 1), getIndex(this.x + 1, this.y + 1)];
+					// 	}
+					// };
+					
+
+					// return [getIndex(this.x, this.y), getIndex(this.x + 1, this.y)];
+
+					// return [getIndex(this.x, this.y), getIndex(this.x + 1, this.y), getIndex(this.x, this.y + 1), getIndex(this.x + 1, this.y + 1)];
+				}
+			};
+
+			return block;
+		}
+
+
+		function getIndex(i, j){
+			if(i < 0 || i > CONST.WIDTH_COUNT - 1){
+				return -1;
+			}
+
+			if(j < 0 || j > CONST.HEIGHT_COUNT - 1){
+				return -1;
+			}
+
+			return j*CONST.WIDTH_COUNT + i;
+		}
 
 		function load(){
 			timer_info = document.getElementById("timer_info");
-			count = -1;
+			score_info = document.getElementById("score_info");
 			timerId = null;
+			canvas = document.getElementById("myCanvas");
+			// container.init();
+
+			context = canvas.getContext("2d");
+			context.fillStyle = CONST.FILL_STYLE;
+			context.strokeStyle = CONST.FILL_STYLE;
+		}
+
+		function drawContainer(){
+			var len = container.blocks.length;
+			for(var i = 0 ; i < len; i ++){
+				var cord = getXYByIndex(i);
+				var x = cord[0];
+				var y = cord[1];
+				if(container.blocks[i] >= 1){
+					context.strokeRect(x * CONST.BLOCK_WIDTH, y * CONST.BLOCK_WIDTH, CONST.BLOCK_WIDTH, CONST.BLOCK_WIDTH);
+				}else{
+					context.clearRect(x * CONST.BLOCK_WIDTH, y * CONST.BLOCK_WIDTH, CONST.BLOCK_WIDTH, CONST.BLOCK_WIDTH);
+				}
+			}
+		}
+
+		function getXYByIndex(index){
+			var y = Math.floor(index / CONST.WIDTH_COUNT);
+			var x = index % CONST.WIDTH_COUNT;
+			return [x, y];
 		}
 
 		function startWorker()
 		{
-			count = -1;
 			clearTimeout(timerId);
-			timerId = setTimeout("runTimer()", 1000);
+			timerId = setTimeout("runTimer()", CONST.TIMER_DURATION);
 		}
 
 		function runTimer()
 		{
-			count += 1;
-			alert(count);
-			timer_info.innerHTML = formatTime(count);
-			timerId = setTimeout("runTimer()", 1000);
+			updateTimerDisplay();
+
+			if(current_block !== null){
+				current_block.moveDown(container);
+			}
+
+			drawContainer();
+		}
+
+		function updateTimerDisplay(){
+			var now = getCurrentTime();
+			var diff = now - start_time - pause_time;
+			timer_info.innerHTML = formatTime(Math.floor(diff/1000));
+			timerId = setTimeout("runTimer()", CONST.TIMER_DURATION);
+
+			// score_info.innerHTML = "pause_time: " + pause_time; 
 		}
 
 		function formatTime(value)
 		{
+			if(value < 0)
+				value = 0;
+
 			var min = Math.floor(value / 60);
 			var sec = value % 60;
 
-			return min + " : " + sec;
+			if(min < 10){
+				min = "0" + min;
+			}
+
+			if(sec < 10){
+				sec = "0" + sec;
+			}
+
+			return min + "：" + sec;
+		}
+
+		function start(){
+			if(inPause){
+				pause_time = 0;
+				pauseStartTime = 0;
+				inPause = false;
+			}
+
+			container.init();
+			drawContainer();
+
+			current_block = getBlock();
+
+			start_time = getCurrentTime();
+			startWorker();
+		}
+
+		function next(){
+			test +=1;
+			container.check_clean();
+			current_block = getBlock();
+		}
+
+		function pause()
+		{
+			if(timerId === null)
+				return;
+
+			if(inPause){
+				pause_time += getCurrentTime() - pauseStartTime;
+				// alert(pause_time);
+				startWorker();
+			}else{
+				pauseStartTime = getCurrentTime();
+				clearTimeout(timerId);
+			}
+
+			inPause = !inPause;
+		}
+
+		function moveLeft(){
+			if(current_block !== null){
+				current_block.moveLeft(container);
+			}
+		}
+
+		function moveRight(){
+			if(current_block !== null){
+				current_block.moveRight(container);
+			}
+		}
+
+		function getCurrentTime(){
+			var date = new Date();
+			return date.getTime();
 		}
 
 	</script>
@@ -47,7 +308,7 @@
 	<h1 class="my_title">我的俄罗斯方块</h1>
 	<div id="inner">
 		<div id="game_panel">
-			
+			<canvas id="myCanvas" width="220" height="440"></canvas>
 		</div>
 
 		<div id="info_panel">
@@ -57,7 +318,7 @@
 			<br/>
 			<br/>
 			<text>消除行：</text>
-			<text class="border">0</text>
+			<text id="score_info" class="border">0</text>
 			<br/>
 			<br/>
 			<br/>
@@ -68,16 +329,16 @@
 	</div>
 	<div id="btn_panel">
 		<div id="main_btn_panel">
-			<button class="btn small_btn">暂停</button>
-			<button class="btn small_btn" onclick="startWorker()">重来</button>
+			<button class="btn small_btn" onclick="pause()">暂停</button>
+			<button class="btn small_btn" onclick="start()">重来</button>
 		</div>
 
 		<div id="control_btn_panel">
 			<table >
 				<tr>
-					<td><button class="btn big_btn">左</button></td>
+					<td><button class="btn big_btn" onclick="moveLeft()">左</button></td>
 					<td><button class="btn big_btn">旋转</button></td>
-					<td><button class="btn big_btn">右</button></td>
+					<td><button class="btn big_btn" onclick="moveRight()">右</button></td>
 				</tr>
 				<tr>
 					<td></td>
