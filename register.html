@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Register</title>
+	<link rel="stylesheet" type="text/css" href="style.css" /> 
+</head>
+<body>
+
+<div id="register_main">
+	<div id="register_form">
+		<form action="/example/html5/demo_form.asp" method="get">
+			<!-- Name: <input type="text" name="user_name" /><br />
+			Password: <input type="password" name="user_pwd_1" /><br />
+			Repeat Password: <input type="password" name="user_pwd_2" /><br />
+			E-mail: <input type="email" name="user_email" /><br />
+			Year of birth: <input type="number" name="user_year_of_birth" max="2016" min="1970" value="1981"/><br />
+			Gender: <input type="text" list="gender_list" name="user_gender" /><br />
+			<datalist id="gender_list">
+				<option value="male" />
+				<option value="female" />
+			</datalist> -->
+
+			<div class="formField clearfix">
+				<label for="name">Name:</label>
+				<input type="text" name="user_name" />
+			</div>
+			<div class="formField clearfix">
+				<label for="pwd_1">Password:</label>
+				<input type="password" name="user_pwd_1" />
+			</div>
+			<div class="formField clearfix">
+				<label for="pwd_2">Repeat Password:</label>
+				<input type="password" name="user_pwd_2" />
+			</div>
+			<div class="formField clearfix">
+				<label for="email">E-mail:</label>
+				<input type="email" name="user_email" />
+			</div>
+			<div class="formField clearfix">
+				<label for="year">Year of birth:</label>
+				<input type="number" name="user_year_of_birth" max="2016" min="1970" value="1981"/>
+			</div>
+			<div class="formField clearfix">
+				<label for="gender">Gender:</label>
+				<input type="text" list="gender_list" name="user_gender" />
+				<datalist id="gender_list">
+					<option value="male" />
+					<option value="female" />
+				</datalist>
+			</div>
+
+			<input type="submit" />
+		</form>
+	</div>
+</div>
+
+</body>
+</html>
