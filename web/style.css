@@ -111,11 +111,11 @@ div#info_panel
 label 
 {
 	width: 150px; 
-	/*min-width: 300px; */
+	min-width: 300px; 
 	/*white-space: nowrap; 
 	word-break: keep-all;*/
 	/*background-color: red;*/
-	display: block;  
+	/*display: inline;  */
 	float: left;
     /*padding: 0 10px;  
     vertical-align: middle;  */
